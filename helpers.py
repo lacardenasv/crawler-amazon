@@ -8,7 +8,7 @@ requests = eventlet.import_patched('requests.__init__')
 time = eventlet.import_patched('time')
 import redis
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 from requests.exceptions import RequestException
 
 import settings
@@ -45,7 +45,7 @@ def make_request(url, return_soup=True):
         return None
 
     if return_soup:
-        return BeautifulSoup(r.text), r.text
+        return BeautifulSoup(r.text, "html.parser"), r.text
     return r
 
 
@@ -62,7 +62,7 @@ def format_url(url):
     else:
         query = "?"
         for piece in u.query.split("&"):
-            k, v = piece.split("=")
+            k, v = piece.split("=") # INFO: Importante porque dependiendo de las urls pueden haber mas valores desempaquetados
             if k in settings.allowed_params:
                 query += "{k}={v}&".format(**locals())
         query = query[:-1]

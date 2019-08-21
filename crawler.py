@@ -7,6 +7,7 @@ import settings
 from models import ProductRecord
 from helpers import make_request, log, format_url, enqueue_url, dequeue_url
 from extractors import get_title, get_url, get_price, get_primary_img
+from strategy.crawler_strategy import CrawlerAmazonContext
 
 crawl_time = datetime.now()
 
@@ -22,26 +23,30 @@ def begin_crawl():
             line = line.strip()
             if not line or line.startswith("#"):
                 continue  # skip blank and commented out lines
+            crawler_context = CrawlerAmazonContext(line).init_crawler()
 
-            page, html = make_request(line)
-            count = 0
+            # page, html = make_request(line)
+            # count = 0
+            # '''
+            # INFO IMPORTANT!: Depends on the markup of the page we should search different elements on the html to
+            # get it right
+            # '''
+            # # look for subcategory links on this page
+            # subcategories = page.findAll("div", "bxc-grid__image")  # downward arrow graphics
+            # subcategories.extend(page.findAll("li", "sub-categories__list__item"))  # carousel hover menu
+            # sidebar = page.find("div", "browseBox")
+            # if sidebar:
+            #     subcategories.extend(sidebar.findAll("li"))  # left sidebar
+            #
+            # for subcategory in subcategories:
+            #     link = subcategory.find("a")
+            #     if not link:
+            #         continue
+            #     link = link["href"]
+            #     count += 1
+            #     enqueue_url(link)
 
-            # look for subcategory links on this page
-            subcategories = page.findAll("div", "bxc-grid__image")  # downward arrow graphics
-            subcategories.extend(page.findAll("li", "sub-categories__list__item"))  # carousel hover menu
-            sidebar = page.find("div", "browseBox")
-            if sidebar:
-                subcategories.extend(sidebar.findAll("li"))  # left sidebar
-
-            for subcategory in subcategories:
-                link = subcategory.find("a")
-                if not link:
-                    continue
-                link = link["href"]
-                count += 1
-                enqueue_url(link)
-
-            log("Found {} subcategories on {}".format(count, line))
+           # log("Found {} subcategories on {}".format(count, line))
 
 
 def fetch_listing():
