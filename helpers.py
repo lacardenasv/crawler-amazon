@@ -4,6 +4,10 @@ from datetime import datetime
 from urlparse import urlparse
 
 import eventlet
+from selenium import webdriver
+
+from settings import SELENIUM_CHROME_DRIVER_PATH
+
 requests = eventlet.import_patched('requests.__init__')
 time = eventlet.import_patched('time')
 import redis
@@ -98,13 +102,29 @@ def get_proxy():
     }
 
 
-def enqueue_url(u):
+def enqueue_url(u, category=False):
     url = format_url(u)
+    if category:
+        url += ',{type}'.format(type=category)
     return redis.sadd("listing_url_queue", url)
 
 
 def dequeue_url():
-    return redis.spop("listing_url_queue")
+    url = redis.spop("listing_url_queue")
+    split_url = url.split(',')
+    return split_url[0], split_url[1]
+
+
+class ProductsRobot(object):
+    def __init__(self):
+        self.driver = webdriver.Chrome(SELENIUM_CHROME_DRIVER_PATH)
+
+    def get_amazon_page(self, url):
+        self.driver.get(url)
+
+    def run(self, url):
+        self.get_amazon_page(url)
+        return self.driver
 
 
 if __name__ == '__main__':

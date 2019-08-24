@@ -12,7 +12,7 @@ def get_title(item):
 
 
 def get_url(item):
-    link = item.find("a", "s-access-detail-page")
+    link = item.find("a", class_="s-access-detail-page")
     if link:
         return link["href"]
     else:
@@ -20,7 +20,7 @@ def get_url(item):
 
 
 def get_price(item):
-    price = item.find("span", "s-price")
+    price = item.find("span", "sx-price")
     if price:
         return price.text
     return None

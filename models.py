@@ -8,7 +8,7 @@ cur = conn.cursor()
 
 class ProductRecord(object):
     """docstring for ProductRecord"""
-    def __init__(self, title, product_url, listing_url, price, primary_img, crawl_time):
+    def __init__(self, title, product_url, listing_url, price, primary_img, crawl_time, category_code):
         super(ProductRecord, self).__init__()
         self.title = title
         self.product_url = product_url
@@ -16,15 +16,17 @@ class ProductRecord(object):
         self.price = price
         self.primary_img = primary_img
         self.crawl_time = crawl_time
+        self.category_code = category_code
 
     def save(self):
-        cur.execute("INSERT INTO products (title, product_url, listing_url, price, primary_img, crawl_time) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id", (
+        cur.execute("INSERT INTO products (title, product_url, listing_url, price, primary_img, crawl_time, category_code) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id", (
             self.title,
             self.product_url,
             self.listing_url,
             self.price,
             self.primary_img,
             self.crawl_time,
+            self.category_code
         ))
         conn.commit()
         return cur.fetchone()[0]
@@ -41,6 +43,7 @@ if __name__ == '__main__':
         listing_url varchar(2056),
         price       varchar(128),
         primary_img varchar(2056),
-        crawl_time timestamp
+        crawl_time timestamp,
+        category_code integer 
     );""")
     conn.commit()

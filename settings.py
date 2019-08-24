@@ -21,7 +21,7 @@ headers = {
     "Accept-Language": "en-US,en;q=0.8",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
 }
-allowed_params = ["node", "rh", "page", "language"]
+allowed_params = ["node", "rh", "page", "language", "url"]
 
 # Proxies
 proxies = [
@@ -39,9 +39,12 @@ max_requests = 2 * 10**6  # two million
 max_details_per_listing = 9999
 
 # Threads
-max_threads = 50
+max_threads = 10
 
 # Logging & Storage
 log_stdout = True
 image_dir = "/tmp/crawl_images"
 export_dir = "/tmp"
+
+# Selenium
+SELENIUM_CHROME_DRIVER_PATH = os.path.join(current_dir, 'selenium/chromedriver')

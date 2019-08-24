@@ -2,8 +2,22 @@ import re
 from bs4 import BeautifulSoup
 from helpers import make_request, enqueue_url, log
 
+CATEGORY_LABELS = {
+    'kitchen': 1,
+    'computer': 2,
+    'toy': 3,
+    'books': 4,
+    'music': 5,
+    'sports': 6,
+    'fashion': 7,
+    'office': 8,
+    'jewelry': 9
+}
+
 
 class CrawlerAmazonStrategy(object):
+    category_label = ''
+
     def __init__(self, category_url):
         self.category_url = category_url
         self.count = 0
@@ -11,7 +25,7 @@ class CrawlerAmazonStrategy(object):
     def crawl_href_and_enqueue(self, element):
         link = element["href"]
         self.count += 1
-        enqueue_url(link)
+        enqueue_url(link, self.category_label)
 
     def run(self):
         self.get_subcategories(self.category_url)
@@ -27,6 +41,8 @@ class CrawlerAmazonStrategy(object):
 
 
 class CrawlerKitchenStrategy(CrawlerAmazonStrategy):
+    category_label = CATEGORY_LABELS['kitchen']
+
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('merchandised-content.*')
         page, html = make_request(category_url)
@@ -45,6 +61,8 @@ class CrawlerKitchenStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerBooksStrategy(CrawlerAmazonStrategy):
+    category_label = CATEGORY_LABELS['books']
+
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('(<div class=\"left_nav browseBox\").*Libros<.*class=\"left_nav_footer\"')
         page, html = make_request(category_url)
@@ -60,6 +78,8 @@ class CrawlerBooksStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerToysStrategy(CrawlerAmazonStrategy):
+    category_label = CATEGORY_LABELS['toy']
+
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('merchandised-content.*')
         page, html = make_request(category_url)
@@ -77,6 +97,8 @@ class CrawlerToysStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerMusicStrategy(CrawlerAmazonStrategy):
+    category_label = CATEGORY_LABELS['music']
+
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('(<h3>Browse by Genre).*(</ul>){1}<h3>Music on Amazon Devices')
         page, html = make_request(category_url)
@@ -92,6 +114,8 @@ class CrawlerMusicStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerSportsStrategy(CrawlerAmazonStrategy):
+    category_label = CATEGORY_LABELS['sports']
+
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('(<h3>Shop by Sport).*(</ul>){1}<h3>')
         page, html = make_request(category_url)
@@ -107,6 +131,8 @@ class CrawlerSportsStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerComputersStrategy(CrawlerAmazonStrategy):
+    category_label = CATEGORY_LABELS['computer']
+
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('Shop by Store.*(</ul>)')
         page, html = make_request(category_url)
@@ -123,6 +149,8 @@ class CrawlerComputersStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerJewelryStrategy(CrawlerAmazonStrategy):
+    category_label = CATEGORY_LABELS['jewelry']
+
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('Featured categories.*Featured deals')
         page, html = make_request(category_url)
@@ -139,6 +167,8 @@ class CrawlerJewelryStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerOfficeStrategy(CrawlerAmazonStrategy):
+    category_label = CATEGORY_LABELS['office']
+
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('Shop by category.*')
         page, html = make_request(category_url)
