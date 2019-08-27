@@ -39,7 +39,7 @@ max_requests = 2 * 10**6  # two million
 max_details_per_listing = 9999
 
 # Threads
-max_threads = 10
+max_threads = 50
 
 # Logging & Storage
 log_stdout = True
