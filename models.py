@@ -19,7 +19,7 @@ class ProductRecord(object):
         self.category_code = category_code
 
     def save(self):
-        cur.execute("INSERT INTO marketplace_crawled_amazon_product (title, product_url, listing_url, price, primary_img, crawl_time, category_code) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id", (
+        cur.execute("INSERT INTO marketplace_crawledamazonproduct (title, product_url, listing_url, price, primary_img, crawl_time, category_code) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id", (
             self.title,
             self.product_url,
             self.listing_url,
@@ -35,8 +35,8 @@ class ProductRecord(object):
 if __name__ == '__main__':
 
     # setup tables
-    cur.execute("DROP TABLE IF EXISTS marketplace_crawled_amazon_product")
-    cur.execute("""CREATE TABLE marketplace_crawled_amazon_product (
+    cur.execute("DROP TABLE IF EXISTS marketplace_crawledamazonproduct")
+    cur.execute("""CREATE TABLE marketplace_crawledamazonproduct (
         id          serial PRIMARY KEY,
         title       varchar(2056),
         product_url         varchar(2056),
