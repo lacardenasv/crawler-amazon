@@ -9,7 +9,7 @@ import settings
 from models import ProductRecord
 from helpers import make_request, log, format_url, enqueue_url, dequeue_url, ProductsRobot
 from extractors import get_title, get_url, get_price, get_primary_img
-from strategy.crawler_strategy import CrawlerAmazonContext
+from strategy.crawler_strategy import CrawlerAmazonContext, CATEGORY_LABELS
 
 crawl_time = datetime.now()
 
@@ -95,7 +95,8 @@ def fetch_listing():
             price=product_price,
             primary_img=product_image,
             crawl_time=crawl_time,
-            category_code=category_code
+            category_code=category_code,
+            category=CATEGORY_LABELS[int(category_code)]
         )
         product_id = product.save()
         # download_image(product_image, product_id)

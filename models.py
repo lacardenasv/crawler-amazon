@@ -8,7 +8,7 @@ cur = conn.cursor()
 
 class ProductRecord(object):
     """docstring for ProductRecord"""
-    def __init__(self, title, product_url, listing_url, price, primary_img, crawl_time, category_code):
+    def __init__(self, title, product_url, listing_url, price, primary_img, crawl_time, category_code, category):
         super(ProductRecord, self).__init__()
         self.title = title
         self.product_url = product_url
@@ -17,16 +17,18 @@ class ProductRecord(object):
         self.primary_img = primary_img
         self.crawl_time = crawl_time
         self.category_code = category_code
+        self.category = category
 
     def save(self):
-        cur.execute("INSERT INTO marketplace_crawledamazonproduct (title, product_url, listing_url, price, primary_img, crawl_time, category_code) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id", (
+        cur.execute("INSERT INTO marketplace_crawledamazonproduct (title, product_url, listing_url, price, primary_img, crawl_time, category_code, category) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id", (
             self.title,
             self.product_url,
             self.listing_url,
             self.price,
             self.primary_img,
             self.crawl_time,
-            self.category_code
+            self.category_code,
+            self.category
         ))
         conn.commit()
         return cur.fetchone()[0]
@@ -44,6 +46,8 @@ if __name__ == '__main__':
         price       varchar(128),
         primary_img varchar(2056),
         crawl_time timestamp,
-        category_code integer 
+        category_code integer,
+        asin varchar(256) null,
+        category varchar(256)
     );""")
     conn.commit()

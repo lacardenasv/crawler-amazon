@@ -2,16 +2,26 @@ import re
 from bs4 import BeautifulSoup
 from helpers import make_request, enqueue_url, log
 
+KITCHEN_CATEGORY = 1
+COMPUTER_CATEGORY = 2
+TOY_CATEGORY = 3
+BOOKS_CATEGORY = 4
+MUSIC_CATEGORY = 5
+SPORTS_CATEGORY = 6
+FASHION_CATEGORY = 7
+OFFICE_CATEGORY = 8
+JEWELRY_CATEGORY = 9
+
 CATEGORY_LABELS = {
-    'kitchen': 1,
-    'computer': 2,
-    'toy': 3,
-    'books': 4,
-    'music': 5,
-    'sports': 6,
-    'fashion': 7,
-    'office': 8,
-    'jewelry': 9
+    KITCHEN_CATEGORY:  'kitchen',
+    COMPUTER_CATEGORY:  'computer',
+    TOY_CATEGORY:  'toy',
+    BOOKS_CATEGORY:  'books',
+    MUSIC_CATEGORY:  'music',
+    SPORTS_CATEGORY:  'sports',
+    FASHION_CATEGORY:  'fashion',
+    OFFICE_CATEGORY:  'office',
+    JEWELRY_CATEGORY:  'jewelry'
 }
 
 
@@ -41,7 +51,7 @@ class CrawlerAmazonStrategy(object):
 
 
 class CrawlerKitchenStrategy(CrawlerAmazonStrategy):
-    category_label = CATEGORY_LABELS['kitchen']
+    category_label = KITCHEN_CATEGORY
 
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('merchandised-content.*')
@@ -61,7 +71,7 @@ class CrawlerKitchenStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerBooksStrategy(CrawlerAmazonStrategy):
-    category_label = CATEGORY_LABELS['books']
+    category_label = BOOKS_CATEGORY
 
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('(<div class=\"left_nav browseBox\").*Libros<.*class=\"left_nav_footer\"')
@@ -78,7 +88,7 @@ class CrawlerBooksStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerToysStrategy(CrawlerAmazonStrategy):
-    category_label = CATEGORY_LABELS['toy']
+    category_label = TOY_CATEGORY
 
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('merchandised-content.*')
@@ -87,7 +97,7 @@ class CrawlerToysStrategy(CrawlerAmazonStrategy):
         subcategory_match = subcategory_rgx.search(strip_html)
         if subcategory_match:
             html_crawled = BeautifulSoup(subcategory_match.group(), "html.parser")
-            container = html_crawled.find_all('div', class_="acsUxWidget")[5].find('div', class_="bxc-grid__container")
+            container = html_crawled.find_all('div', class_="acsUxWidget")[4].find('div', class_="bxc-grid__container")
             categories_rows = container.find_all('div', 'bxc-grid__row')[1:5:1]
             for row in categories_rows:
                 subcategories = row.find_all('a')
@@ -97,7 +107,7 @@ class CrawlerToysStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerMusicStrategy(CrawlerAmazonStrategy):
-    category_label = CATEGORY_LABELS['music']
+    category_label = MUSIC_CATEGORY
 
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('(<h3>Browse by Genre).*(</ul>){1}<h3>Music on Amazon Devices')
@@ -114,7 +124,7 @@ class CrawlerMusicStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerSportsStrategy(CrawlerAmazonStrategy):
-    category_label = CATEGORY_LABELS['sports']
+    category_label = SPORTS_CATEGORY
 
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('(<h3>Shop by Sport).*(</ul>){1}<h3>')
@@ -131,7 +141,7 @@ class CrawlerSportsStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerComputersStrategy(CrawlerAmazonStrategy):
-    category_label = CATEGORY_LABELS['computer']
+    category_label = COMPUTER_CATEGORY
 
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('Shop by Store.*(</ul>)')
@@ -149,7 +159,7 @@ class CrawlerComputersStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerJewelryStrategy(CrawlerAmazonStrategy):
-    category_label = CATEGORY_LABELS['jewelry']
+    category_label = JEWELRY_CATEGORY
 
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('Featured categories.*Featured deals')
@@ -167,7 +177,7 @@ class CrawlerJewelryStrategy(CrawlerAmazonStrategy):
 
 
 class CrawlerOfficeStrategy(CrawlerAmazonStrategy):
-    category_label = CATEGORY_LABELS['office']
+    category_label = OFFICE_CATEGORY
 
     def get_subcategories(self, category_url):
         subcategory_rgx = re.compile('Shop by category.*')

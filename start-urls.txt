@@ -1,7 +1,7 @@
 https://www.amazon.com/Sports-Fitness/b?ie=UTF8&node=10971181011
 https://www.amazon.com/computer-pc-hardware-accessories-add-ons/b?ie=UTF8&node=541966
 https://www.amazon.com/kitchen-dining/b?ie=UTF8&node=284507
-https://www.amazon.com/books-used-books-textbooks/b?ie=UTF8&language=es_US&node=283155
+#https://www.amazon.com/books-used-books-textbooks/b?ie=UTF8&language=es_US&node=283155 CORREGIR
 https://www.amazon.com/toys/b?ie=UTF8&node=165793011
 https://www.amazon.com/music-rock-classical-pop-jazz/b?ie=UTF8&node=5174
 https://www.amazon.com/Jewelry/b?ie=UTF8&node=7192394011
