@@ -9,12 +9,10 @@ import settings
 from models import ProductRecord
 from helpers import make_request, log, format_url, enqueue_url, dequeue_url, ProductsRobot
 from extractors import get_title, get_url, get_price, get_primary_img
-from strategy.crawler_strategy import CrawlerAmazonContext, CATEGORY_LABELS
+from strategy.crawler_strategy import CrawlerAmazonContext, CATEGORY_LABELS, CrawlerAmazonStrategy, pile, pool, \
+    fetch_listing
 
 crawl_time = datetime.now()
-
-pool = eventlet.GreenPool(settings.max_threads)
-pile = eventlet.GreenPile(pool)
 
 
 def begin_crawl():
@@ -25,7 +23,7 @@ def begin_crawl():
             line = line.strip()
             if not line or line.startswith("#"):
                 continue  # skip blank and commented out lines
-            crawler_context = CrawlerAmazonContext(line).init_crawler()
+            crawler_context = CrawlerAmazonContext().init_crawler(line)
 
             # page, html = make_request(line) TODO: delete comment code
             # count = 0
@@ -49,64 +47,6 @@ def begin_crawl():
             #     enqueue_url(link)
 
            # log("Found {} subcategories on {}".format(count, line))
-
-
-def fetch_listing():
-
-    global crawl_time
-    url, category_code = dequeue_url()
-    if not url:
-        log("WARNING: No URLs found in the queue. Retrying...")
-        pile.spawn(fetch_listing)
-        return
-
-    # make request through selenium
-    products_robot = ProductsRobot().run(url)
-    page = BeautifulSoup(products_robot.page_source, "html.parser")
-    products_robot.quit()
-
-    items = []
-    items_container = page.find(id="mainResults")
-    if items_container:
-        items = items_container.find_all(id=re.compile('result_\d*'))
-
-    # page, html = make_request(url)
-    # if not page:
-    #     return
-    #
-    # items = page.findAll("li", "s-result-item")
-    log("Found {} items on {}".format(len(items), url))
-
-    for item in items[:settings.max_details_per_listing]:
-
-        product_image = get_primary_img(item)
-        if not product_image:
-            log("No product image detected, skipping")
-            continue
-
-        product_title = get_title(item)
-        product_url = get_url(item)
-        product_price = get_price(item)
-
-        product = ProductRecord(
-            title=product_title,
-            product_url=format_url(product_url),
-            listing_url=format_url(url),
-            price=product_price,
-            primary_img=product_image,
-            crawl_time=crawl_time,
-            category_code=category_code,
-            category=CATEGORY_LABELS[int(category_code)]
-        )
-        product_id = product.save()
-        # download_image(product_image, product_id)
-
-    # add next page to queue
-    next_link = page.find("a", id="pagnNextLink")
-    if next_link:
-        log(" Found 'Next' link on {}: {}".format(url, next_link["href"]))
-        enqueue_url(next_link["href"],  category_code)
-        pile.spawn(fetch_listing)
 
 
 if __name__ == '__main__':

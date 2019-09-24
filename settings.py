@@ -48,3 +48,7 @@ export_dir = "/tmp"
 
 # Selenium
 SELENIUM_CHROME_DRIVER_PATH = os.path.join(current_dir, 'selenium/chromedriver')
+
+# CRAWLER MODE
+PRODUCT_CRAWLER = 100
+LINK_DETAIL_PRODUCT = 200

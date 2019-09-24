@@ -102,17 +102,17 @@ def get_proxy():
     }
 
 
-def enqueue_url(u, category=False):
+def enqueue_url(u, category=False, mode=settings.LINK_DETAIL_PRODUCT):
     url = format_url(u)
     if category:
-        url += ',{type}'.format(type=category)
+        url += ',{type},{mode}'.format(type=category, mode=mode)
     return redis.sadd("listing_url_queue", url)
 
 
 def dequeue_url():
     url = redis.spop("listing_url_queue")
-    split_url = url.split(',')
-    return split_url[0], split_url[1]
+    url, category_code, mode = url.split(',')
+    return url, category_code, int(mode)
 
 
 class ProductsRobot(object):
