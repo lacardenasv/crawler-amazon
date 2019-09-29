@@ -39,6 +39,17 @@ CATEGORY_LABELS = {
     JEWELRY_CATEGORY:  'jewelry'
 }
 
+'''* LIB *'''
+
+
+def normalize_text(title):
+    if not title[0] in ('\n', ' ', '\t'):
+        return title
+    title = title.strip('\n')
+    title = title.strip(' ')
+    title = title.strip('\t')
+    return normalize_text(title)
+
 
 class ProductExtraInfo(object):
     dimensions_regex = r'(\d+\s|\s*\d+\.+\d+)'
@@ -99,7 +110,7 @@ class MarkedAProductExtraInfo(ProductExtraInfo):
         if asin_item:
             asin_tag = asin_item.parent.parent.find('td', class_="value")
             asin_value = asin_tag.text if asin_tag else asin_item.parent.parent.find_all('td')[-1].text
-        return asin_value
+        return normalize_text(asin_value)
 
     def get_product_dimensions(self, product_info):
         dimensions_value = {}
@@ -109,9 +120,9 @@ class MarkedAProductExtraInfo(ProductExtraInfo):
             item_value = item_tag.text if item_tag else dimensions_item.parent.parent.find_all('td')[-1].text
             dimensions_crawled = re.findall(self.dimensions_regex, item_value)
             dimensions_value = {
-                "length": dimensions_crawled[0],
-                "width": dimensions_crawled[1],
-                "height": dimensions_crawled[2]
+                "length": float(dimensions_crawled[0]),
+                "width": float(dimensions_crawled[1]),
+                "height": float(dimensions_crawled[2])
             }
         return dimensions_value
 
@@ -141,9 +152,9 @@ class MarkedAProductExtraInfo(ProductExtraInfo):
             package_value = package_tag.text if package_tag else package_info_item.parent.parent.find_all('td')[-1].text
             dimensions_crawled = re.findall(self.dimensions_regex, package_value)
             package_dimensions_value = {
-                "length": dimensions_crawled[0],
-                "width": dimensions_crawled[1],
-                "height": dimensions_crawled[2]
+                "length": float(dimensions_crawled[0]),
+                "width": float(dimensions_crawled[1]),
+                "height": float(dimensions_crawled[2])
             }
         return package_dimensions_value
 
@@ -178,7 +189,9 @@ class CrawlerAmazonStrategy(object):
     def get_product_title(self, page):
         title = page.find(id="productTitle")
         if title:
-            return title.string
+            title = title.text
+            title_normalized = normalize_text(title)
+            return title_normalized
 
     def get_product_primary_image(self, page):
         image_container = page.find(id="imgTagWrapperId")
@@ -188,7 +201,7 @@ class CrawlerAmazonStrategy(object):
     def get_product_price(self, page):
         price = page.find(id="priceblock_ourprice")
         if price:
-            return price.string.replace('$', '')
+            return price.string.replace('$', '').replace(',', '')
 
     def get_product_extra_info(self, page, category_code):
         get_extra_info_strategy = self.product_type_mark[int(category_code)]
