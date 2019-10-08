@@ -5,7 +5,7 @@ redis_db = 0
 
 
 def test_connection():
-    redis_connection = redis.StrictRedis(
+    redis_connection = redis.Redis(
         host=redis_host,
         port=redis_port,
         db=redis_db

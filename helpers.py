@@ -19,7 +19,7 @@ import settings
 
 num_requests = 0
 
-redis = redis.StrictRedis(host=settings.redis_host, port=settings.redis_port, db=settings.redis_db)
+redis = redis.Redis(host=settings.redis_host, port=settings.redis_port, db=settings.redis_db)
 
 
 def make_request(url, return_soup=True):
