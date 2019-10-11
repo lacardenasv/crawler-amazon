@@ -117,7 +117,14 @@ def dequeue_url():
 
 class ProductsRobot(object):
     def __init__(self):
-        self.driver = webdriver.Chrome(SELENIUM_CHROME_DRIVER_PATH)
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        self.driver = webdriver.Chrome(
+            SELENIUM_CHROME_DRIVER_PATH,
+            chrome_options=chrome_options,
+            service_args=['--verbose', '--log-path?=/tmp/chromedrive.log']
+        )
 
     def get_amazon_page(self, url):
         self.driver.get(url)
